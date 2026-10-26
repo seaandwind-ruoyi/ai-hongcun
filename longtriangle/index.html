@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI红村-长三角专题页</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f5f7f5;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  /* ===== 顶部导航 ===== */
+  .navbar {
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #c62828;
+  }
+  .navbar .logo svg { width: 32px; height: 32px; }
+  .navbar .nav-links { display: flex; gap: 28px; }
+  .navbar .nav-links a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .navbar .nav-links a:hover { color: #c62828; }
+
+  /* ===== Hero区域 ===== */
+  .hero {
+    background: url('hero-bg.jpg') center center / cover no-repeat;
+    color: #fff;
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero h1, .hero .subtitle {
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.45);
+  }
+  .hero .subtitle {
+    font-size: 20px;
+    opacity: 0.95;
+    margin-bottom: 40px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .hero .stats {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+  }
+  .hero .stat-item { text-align: center; }
+  .hero .stat-num {
+    font-size: 42px;
+    font-weight: 800;
+    display: block;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .hero .stat-label {
+    font-size: 14px;
+    opacity: 0.85;
+    margin-top: 4px;
+  }
+
+  /* ===== 三步流程 ===== */
+  .process {
+    background: #fff;
+    padding: 50px 40px;
+    text-align: center;
+  }
+  .process h2 {
+    font-size: 28px;
+    color: #c62828;
+    margin-bottom: 40px;
+    font-weight: 700;
+  }
+  .process .steps {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .process .step { flex: 1; text-align: center; }
+  .process .step-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 28px;
+  }
+  .process .step h3 { font-size: 16px; color: #333; margin-bottom: 8px; font-weight: 600; }
+  .process .step p { font-size: 13px; color: #888; }
+
+  /* ===== 路线筛选+卡片 ===== */
+  .routes-section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 50px 24px 80px;
+  }
+  .routes-section h2 {
+    font-size: 28px;
+    color: #c62828;
+    text-align: center;
+    margin-bottom: 32px;
+    font-weight: 700;
+  }
+
+  .filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 8px 24px;
+    border-radius: 100px;
+    border: 1.5px solid #ffcdd2;
+    background: #fff;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .filter-btn:hover {
+    border-color: #e53935;
+    color: #c62828;
+    background: #fff5f5;
+  }
+  .filter-btn.active {
+    background: #c62828;
+    color: #fff;
+    border-color: #c62828;
+    box-shadow: 0 4px 12px rgba(198,40,40,0.25);
+  }
+
+  .routes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .route-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .route-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(198,40,40,0.15);
+  }
+  .route-card .card-img {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.7);
+    font-size: 48px;
+  }
+  .route-card .card-body { padding: 18px 20px 20px; }
+  .route-card .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .route-card .card-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .route-card .tag {
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .tag-days { background: #ffebee; color: #c62828; }
+  .tag-location { background: #fff3e0; color: #e65100; }
+  .route-card .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .route-card .price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #e53935;
+  }
+  .route-card .price span {
+    font-size: 12px;
+    font-weight: 400;
+    color: #999;
+  }
+  .route-card .book-btn {
+    padding: 8px 18px;
+    border-radius: 100px;
+    background: linear-gradient(135deg, #e53935, #c62828);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .route-card .book-btn:hover {
+    background: linear-gradient(135deg, #c62828, #b71c1c);
+    box-shadow: 0 4px 12px rgba(198,40,40,0.3);
+  }
+
+  /* ===== FAQ ===== */
+  .faq {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 50px 24px 80px;
+  }
+  .faq h2 {
+    font-size: 28px;
+    color: #c62828;
+    text-align: center;
+    margin-bottom: 36px;
+    font-weight: 700;
+  }
+  .faq-item {
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  }
+  .faq-question {
+    padding: 18px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+  }
+  .faq-question:hover { background: #fff5f5; }
+  .faq-question .arrow { transition: transform 0.3s; font-size: 12px; color: #999; }
+  .faq-item.open .faq-question .arrow { transform: rotate(180deg); }
+  .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .faq-item.open .faq-answer { max-height: 400px; }
+  .faq-answer p { padding: 0 24px 18px; font-size: 14px; color: #666; line-height: 1.7; }
+
+  /* ===== 底部CTA ===== */
+  .cta {
+    background: linear-gradient(135deg, #b71c1c, #c62828);
+    color: #fff;
+    text-align: center;
+    padding: 50px 24px;
+  }
+  .cta h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+  .cta p { font-size: 15px; opacity: 0.9; margin-bottom: 28px; }
+  .cta .dingtalk-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 36px;
+    border-radius: 100px;
+    background: #fff;
+    color: #c62828;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+  .cta .dingtalk-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+
+  .footer {
+    background: #1a1a1a;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 28px 24px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 32px; }
+    .hero .stats { gap: 24px; }
+    .hero .stat-num { font-size: 28px; }
+    .process .steps { flex-direction: column; gap: 24px; }
+    .routes-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .navbar { padding: 0 16px; }
+    .navbar .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <svg viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="15" fill="#c62828"/>
+      <path d="M10 16 L14 20 L22 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    AI红村
+  </div>
+  <div class="nav-links">
+    <a href="#routes">长三角路线</a>
+    <a href="#process">预订流程</a>
+    <a href="#faq">常见问题</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>AI红村 - 长三角专题页</h1>
+  <p class="subtitle">江苏 · 浙江 · 安徽 · 上海</p>
+</section>
+
+<section class="process" id="process">
+  <h2>三步轻松预订</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">🔍</div>
+      <h3>选择路线</h3>
+      <p>浏览17条长三角精选路线<br>点击卡片跳转飞猪了解详情</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">🚀</div>
+      <h3>出发下单</h3>
+      <p>欢行系统选择"主题党日"一键出发</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">💬</div>
+      <h3>出行服务</h3>
+      <p>钉钉添加"yuliyu007"律律咨询出行</p>
+    </div>
+  </div>
+</section>
+
+<section class="routes-section" id="routes">
+  <h2>精选路线</h2>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterRoutes('all')">全部路线</button>
+    <button class="filter-btn" onclick="filterRoutes('half')">半日</button>
+    <button class="filter-btn" onclick="filterRoutes('1')">1日</button>
+    <button class="filter-btn" onclick="filterRoutes('2')">2天</button>
+  </div>
+  <div class="routes-grid" id="routesGrid"></div>
+</section>
+
+<section class="faq" id="faq">
+  <h2>常见问题</h2>
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)"><span>Q：长三角路线费用如何结算？</span><span class="arrow">▼</span></div>
+    <div class="faq-answer"><p>A：普通路线可以选择欢行下单，流程详见<a href="https://alidocs.dingtalk.com/i/nodes/2Amq4vjg89jyZdNnCQ6gqG23W3kdP0wQ?spm=a2oxq.index.0.0.32277a7c2PzAbe&utm_scene=person_space" target="_blank" style="color:#c62828;text-decoration:underline;">此文档</a>。</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)"><span>Q：每个团队人数有限制吗？</span><span class="arrow">▼</span></div>
+    <div class="faq-answer"><p>A：建议团队人数10-30人，具体请在飞猪详情页确认。</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)"><span>Q：如何在欢行系统下单？</span><span class="arrow">▼</span></div>
+    <div class="faq-answer"><p>A：在欢行系统中选择"主题党日"类型，即可关联AI红村路线完成下单。</p></div>
+  </div>
+</section>
+
+<footer class="footer">© 2026 AI红村 · 长三角专题页</footer>
+
+<script>
+// ===== 路线数据（28条真实飞猪链接，标题+价格+图片来自飞猪页面抓取） =====
+const routes = [
+  { id: 1, title: '【AI红村】绍兴诸暨+俞秀松纪念馆+次坞打面跟团游', days: 0.5, category: 'half', location: '绍兴', price: 178, img: 'https://img.alicdn.com/bao/uploaded/i4/6000000003759/O1CN016IEI6Y1ddfxguWVbz_!!6000000003759-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1010494894658&pc=1' },
+  { id: 2, title: '【AI红村】衢州开化根缘小镇+根雕艺术博物馆+金星村2日游', days: 2, category: '2', location: '衢州', price: 768, img: 'https://img.alicdn.com/bao/uploaded/i2/6000000007921/O1CN01OSPg8E28NsNVWXUyW_!!6000000007921-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1009776111167&pc=1' },
+  { id: 3, title: '【AI红村】丽水景宁党群服务中心+大均畲乡+那云2日游', days: 2, category: '2', location: '丽水', price: 638, img: 'https://img.alicdn.com/bao/uploaded/i3/6000000002427/O1CN01NMovb61TncNt4gPnv_!!6000000002427-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1009792015778&pc=1' },
+  { id: 6, title: '【AI红村】南京+云锦博物馆+南京宪法公园半日游', days: 0.5, category: 'half', location: '南京', price: 118, displayDuration: '3小时', img: 'https://img.alicdn.com/bao/uploaded/i2/6000000007230/O1CN01YgDs4v23HOhrmLkDP_!!6000000007230-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1009866879502&pc=1' },
+  { id: 7, title: '【AI红村】上海+一大会址+龙华烈士陵园半日游', days: 0.5, category: 'half', location: '上海', price: 108, displayDuration: '3小时', img: 'https://img.alicdn.com/bao/uploaded/i1/6000000004007/O1CN01GROHkD1fTGBlRioah_!!6000000004007-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1010508934396&pc=1' },
+  { id: 17, title: '【AI红村】南京+渡江胜利纪念馆半日游', days: 0.5, category: 'half', location: '南京', price: 118, displayDuration: '3小时', img: 'https://img.alicdn.com/bao/uploaded/i1/6000000008087/O1CN01gg7MWS29bu7jMlwl4_!!6000000008087-2-itemdesc.png_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1039554955515&pc=1' },
+  { id: 18, title: '【AI红村】南京梅园新村纪念馆+雨花台烈士陵园一日游', days: 1, category: '1', location: '南京', price: 170, img: 'https://img.alicdn.com/bao/uploaded/i4/6000000001218/O1CN01TQxnlT1KrtXx0Bnof_!!6000000001218-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1040297718270&pc=1' },
+  { id: 19, title: '【AI红村】杭州+中共杭州小组+小营巷纪念馆半日游', days: 0.5, category: 'half', location: '杭州', price: 135, img: 'https://img.alicdn.com/bao/uploaded/i2/6000000004066/O1CN01MM78eC1fuHYZBwYRN_!!6000000004066-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1042391096616&pc=1' },
+  { id: 20, title: '【AI红村】嘉兴+南湖革命纪念馆半日游', days: 0.5, category: 'half', location: '嘉兴', price: 215, img: 'https://img.alicdn.com/bao/uploaded/i2/6000000006014/O1CN01UsEOna1uIT5qRLhtC_!!6000000006014-2-itemdesc.png_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1041508437848&pc=1' },
+  { id: 21, title: '【AI红村】杭州运河水上巴士+浙江展览馆短途游', days: 1, category: 'half', location: '杭州', price: 125, displayDuration: '3小时', img: 'https://img.alicdn.com/bao/uploaded/i2/2213970080012/O1CN01YR6UnP1BxXtsi2kJr_!!2213970080012.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1062235948438&pc=1' },
+  { id: 22, title: '【AI红村】磐安红军挺进师纪念馆+百杖潭+墨林村2日游', days: 2, category: '2', location: '磐安', price: 800, img: 'https://img.alicdn.com/bao/uploaded/i2/6000000000768/O1CN0151WNrV1HXnKRxfnLJ_!!6000000000768-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1062666801033&pc=1' },
+  { id: 23, title: '【AI红村】杭州余杭+青山村+小古城村+传统手艺制作1日游', days: 1, category: '1', location: '杭州', price: 358, img: 'https://img.alicdn.com/bao/uploaded/i4/6000000004371/O1CN01H5uS4h1i9yM0aovlf_!!6000000004371-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1010473158899&pc=1' },
+  { id: 24, title: '【AI红村】杭州西溪湿地国家森林公园+洪氏宗祠短途游', days: 1, category: 'half', location: '杭州', price: 218, displayDuration: '3小时', img: 'https://img.alicdn.com/bao/uploaded/i2/6000000001674/O1CN01GnsBxj1OEkAE8Ygw4_!!6000000001674-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1011359821665&pc=1' },
+  { id: 25, title: '【AI红村】杭州余杭径山红村行跟团游', days: 1, category: 'half', location: '杭州', price: 148, displayDuration: '3小时', img: 'https://img.alicdn.com/bao/uploaded/i1/6000000000206/O1CN01I5BrmN1DOOk1WthAm_!!6000000000206-2-itemdesc.png_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1010454978523&pc=1' },
+  { id: 42, title: '【红色研学】杭州富阳区桐洲岛+孙晓梅故居半日游', days: 0.5, category: 'half', location: '杭州', price: 218, img: 'https://img.alicdn.com/bao/uploaded/i1/6000000001180/O1CN01PeKkIL1KaUVYlh3B7_!!6000000001180-0-itemdesc.jpg_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1009761143794&pc=1' },
+  { id: 43, title: '【红色研学】莫干山+毛主席下榻处半日游', days: 1, category: '1', location: '湖州', price: 310, img: 'https://img.alicdn.com/bao/uploaded/i1/6000000005161/O1CN01moflqo1nznFJTGhff_!!6000000005161-2-itemdesc.png_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1051741460183&pc=1' },
+  { id: 44, title: '【红色研学】杭州富阳区+郁达夫公园（故居）短途游', days: 1, category: 'half', location: '杭州', price: 148, displayDuration: '3小时', img: 'https://img.alicdn.com/bao/uploaded/i2/6000000003796/O1CN01208mZl1ducbY2WW7w_!!6000000003796-2-itemdesc.png_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1049670867104&pc=1' },
+  { id: 45, title: '【红色研学】淳安+抗日先遣队纪念馆+茶山会议旧址+文渊狮城1日游', days: 1, category: '1', location: '淳安', price: 285, img: 'https://img.alicdn.com/bao/uploaded/i4/6000000000687/O1CN01MV5HqZfDMvE1chua_!!6000000000687-2-itemdesc.png_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1077256186291&pc=1' },
+  { id: 46, title: '【红色研学】桐庐+浙东人民解放军金萧支队纪念馆+哈溪漂流一日游', days: 1, category: '1', location: '桐庐', price: 310, img: 'https://img.alicdn.com/bao/uploaded/i2/6000000003499/O1CN01xRWLxznDaVE1chua_!!6000000003499-2-itemdesc.png_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1079291880025&pc=1' },
+  { id: 47, title: '【红色研学】安徽黄山+岩寺新四军军部旧址+屯溪老街2日游', days: 2, category: '2', location: '黄山', price: 165, img: 'https://img.alicdn.com/bao/uploaded/i4/6000000001645/O1CN01LdCfkNW4PAJ1chua_!!6000000001645-2-itemdesc.png_400x400.jpg', url: 'https://traveldetail.fliggy.com/item.htm?id=1078319133934&pc=1' }
+];
+
+const gradients = [
+  'linear-gradient(135deg, #b71c1c, #e53935)',
+  'linear-gradient(135deg, #880e4f, #c2185b)',
+  'linear-gradient(135deg, #4a148c, #7b1fa2)',
+  'linear-gradient(135deg, #1a237e, #3949ab)',
+  'linear-gradient(135deg, #004d40, #00897b)',
+  'linear-gradient(135deg, #33691e, #689f38)',
+  'linear-gradient(135deg, #e65100, #f57c00)',
+  'linear-gradient(135deg, #3e2723, #6d4c41)',
+];
+
+function renderCards(filter) {
+  const grid = document.getElementById('routesGrid');
+  const filtered = filter === 'all' ? routes
+    : filter === 'gongyi' ? routes.filter(r => r.title.includes('公益'))
+    : routes.filter(r => r.category === filter);
+
+  grid.innerHTML = filtered.map((r, i) => {
+    const grad = gradients[i % gradients.length];
+    const daysText = r.displayDuration || (r.days <= 0.5 ? '半日' : r.days === 1 ? '1日' : r.days + '天' + (r.days > 1 ? (r.days - 1) + '晚' : ''));
+    const imgContent = r.img
+      ? `<img src="${r.img}" style="width:100%;height:100%;object-fit:cover;" alt="${r.title}" onerror="this.style.display='none';this.parentElement.style.background='${grad}';this.parentElement.innerHTML='🏔️'">`
+      : `<div style="width:100%;height:100%;background:${grad};display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.7);font-size:48px;">🏔️</div>`;
+
+    return `
+      <a class="route-card" href="${r.url}" target="_blank" rel="noopener">
+        <div class="card-img" style="position:relative;overflow:hidden;">
+          ${imgContent}
+        </div>
+        <div class="card-body">
+          <div class="card-title">${r.title}</div>
+          <div class="card-tags">
+            <span class="tag tag-days">${daysText}</span>
+            <span class="tag tag-location">${r.location}</span>
+          </div>
+          <div class="card-footer">
+            <div class="price">¥${r.price}起 <span>/人</span></div>
+            <span class="book-btn">立即预订</span>
+          </div>
+        </div>
+      </a>
+    `;
+  }).join('');
+}
+
+function filterRoutes(category) {
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  renderCards(category);
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+renderCards('all');
+</script>
+
+</body>
+</html>
